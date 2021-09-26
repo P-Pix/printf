@@ -8,86 +8,94 @@
  */
 
 #include <stdio.h>
+#include <stdarg.h>
 
-void printshort(short arg)
-{
-    for( ; ; )
-    {
+#define TYPE_ARGUMENT   3
 
+int main(void);
+
+/// printf recode
+void printer(char *print, ...);
+
+/// convert integer value in char
+char *convert(int value);
+
+char *convert(int value) {
+    char *string;
+    int position = 0;
+    for (int i = 10000; i > 0; i /= 10) {
+        int stock = value / i;
+        if (stock == 0) {
+            string[position] = '0';
+        } else if (stock == 1) {
+            string[position] = '1';
+        } else if (stock == 2) {
+            string[position] = '2';
+        } else if (stock == 3) {
+            string[position] = '3';
+        } else if (stock == 4) {
+            string[position] = '4';
+        } else if (stock == 5) {
+            string[position] = '5';
+        } else if (stock == 6) {
+            string[position] = '6';
+        } else if (stock == 7) {
+            string[position] = '7';
+        } else if (stock == 8) {
+            string[position] = '8';
+        } else if (stock == 9) {
+            string[position] = '9';
+        }
+        position++;
+        value = value - stock * i;
     }
-}
-void printint(int arg)
-{
-    for( ; ; )
-    {
-
-    }
-}
-void printfloat(float arg)
-{
-    for( ; ; )
-    {
-
-    }
-}
-void printlong(long arg)
-{
-    for( ; ; )
-    {
-
-    }
-}
-void printlonglong(long long arg)
-{
-    for( ; ; )
-    {
-
-    }
+    return string;
 }
 
-void (*ptr[5])() =
-{
-    printshort,
-    printint,
-    printfloat,
-    printlong,
-    printlonglong
-};
-const char *list[] = 
-{
-    "s",
-    "d",
-    "f",
-    "ld",
-    "lld"
-};
+void printer(char *print, ...) {
+    va_list arg;
+    va_start(arg, print);
 
-void print(const char *print, ...)
-{
-    printf("%ld\n", sizeof(list));
-    for(int x = 0; x < sizeof(print) / 4; x ++)
-    {
-        if(print[x] == "%")
-        {
-            char indicator = "";
-            while(print[x] != " ")
-            {
-                x ++;
-                indicator += print[x];
-            }
-            for(int i = 0; i < sizeof(list) / 8; i ++)
-            {
-                if(indicator == list[i])
-                {
-                    ptr[i]();
+    for (int character = 0; print[character] != '\0'; character++) {
+        if (print[character] != '%') {
+            putchar(print[character]);
+        } else {
+            character++;
+            char type = print[character];
+            if (type == 's') {
+                puts(va_arg(arg,
+                char *));
+            } else if (type == 'd') {
+                putchar(va_arg(arg,
+                int));
+            } else if (type == 'f') {
+                putchar(va_arg(arg,
+                double));
+            } else if (type == 'l') {
+                character++;
+                if (print[character] == 'd') {
+                    putchar(va_arg(arg,
+                    long int));
+                } else if (print[character] == 'l') {
+                    character++;
+                    if (print[character] == 'd') {
+                        putchar(va_arg(arg,
+                        long long int));
+                    }
                 }
             }
         }
     }
+    va_end(arg);
 }
 
-int main(void)
-{
-    print("oui oui oui %d", 4);
+int main(void) {
+    int val = 65000;
+    char *text = "lol";
+    float valf = 178.555;
+    long int li = 8778787;
+    long long int lli = 475778888;
+    printer("oui oui oui\nint = %d\nstring = %sfloat = %f\nlong int = %ld\nlong long int = %lld \n", val, text, valf,
+            li, lli);
     return 0;
 }
